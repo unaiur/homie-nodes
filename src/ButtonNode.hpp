@@ -34,9 +34,16 @@ public:
   void setTargetTopic(String const &v);
 
 protected:
+  enum EUpdatedProperty
+  {
+    eLocalTopicEnabled,
+    eOnChanged,
+    eBrightnessChanged
+  };
+  
   void setOn(bool v);
   void setBrightness(uint brightness);
-  virtual void triggerLocalTopic(bool on, uint brightness) {}
+  virtual void updateLocalTopic(EUpdatedProperty updatedProperty) {}
   virtual void onReadyToOperate();
 
 private:

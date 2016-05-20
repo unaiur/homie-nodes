@@ -7,25 +7,14 @@ HomieButtonNode::HomieButtonNode(const char *id, Type t)
     bool v = value == F("true");
     if (!v && value != F("false"))
       return false;
-    Serial.printf("Received order to turn %s local function\n", v ? "on" : "off");
-    _local = v;
-    if (v)
-      this->triggerLocalTopic(_on, _brightness);
-    Homie.setNodeProperty(*this, "local", _local ? "true" : "false");
+    this->setLocalTopicEnabled(v);
     return true;
   });
 
   this->subscribe("target", [this](String value) {
     if (value.length() > 64)
       return false;
-    Serial.printf("Button attached to node %s\n", value.c_str());
-    _target = value;
-    if (!_target.endsWith("/"))
-      _target += "/";
-    this->setOn(_on);
-    if (this->is(eDimmer))
-      this->setBrightness(_brightness);
-    Homie.setNodeProperty(*this, "target", _target ? _target.c_str() : "");
+    this->setTargetTopic(value);
     return true;
   });
 
@@ -35,11 +24,25 @@ HomieButtonNode::HomieButtonNode(const char *id, Type t)
 void HomieButtonNode::setLocalTopicEnabled(bool v)
 {
   _local = v;
+  Homie.setNodeProperty(*this, "local", _local ? "true" : "false");
+  if (v)
+    this->updateLocalTopic(eLocalTopicEnabled);
 }
 
 void HomieButtonNode::setTargetTopic(String const &v)
 {
+  Serial.printf("Button attached to node %s\n", v.c_str());
   _target = v;
+  if (!_target.endsWith("/"))
+    _target += "/";
+  Homie.setNodeProperty(*this, "target", _target.length() > 0 ? _target.c_str() : "");
+  Homie.publishProperty(_target, "on", isOn() ? "true" : "false", true);
+  if (this->is(eDimmer))
+  {
+    char szValue[8];
+    sprintf(szValue, "%d", getBrightness());
+    Homie.publishProperty(_target, "brightness", szValue, true);
+  }
 }
 
 const char *HomieButtonNode::getTypeName() const
@@ -62,10 +65,11 @@ void HomieButtonNode::onReadyToOperate()
 
 void HomieButtonNode::setOn(bool v)
 {
+  Serial.printf("Received order to turn %s local function\n", v ? "on" : "off");
   Homie.publishProperty(_target, "on", v ? "true" : "false", true);
   _on = v;
   if (_local)
-    triggerLocalTopic(_on, _brightness);
+    updateLocalTopic(eOnChanged);
 }
 
 void HomieButtonNode::setBrightness(uint v)
@@ -76,5 +80,5 @@ void HomieButtonNode::setBrightness(uint v)
   Homie.publishProperty(_target, "brightness", szValue, true);
   _brightness = v;
   if (_local)
-    triggerLocalTopic(_on, _brightness);
+    updateLocalTopic(eBrightnessChanged);
 }
