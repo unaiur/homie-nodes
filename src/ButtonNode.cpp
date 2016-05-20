@@ -7,7 +7,7 @@ HomieButtonNode::HomieButtonNode(const char *id, Type t)
     bool v = value == F("true");
     if (!v && value != F("false"))
       return false;
-    this->setLocalTopicEnabled(v);
+    this->setLocalNodeEnabled(v);
     return true;
   });
 
@@ -21,12 +21,12 @@ HomieButtonNode::HomieButtonNode(const char *id, Type t)
   Homie.registerNode(*this);
 }
 
-void HomieButtonNode::setLocalTopicEnabled(bool v)
+void HomieButtonNode::setLocalNodeEnabled(bool v)
 {
   _local = v;
   Homie.setNodeProperty(*this, "local", _local ? "true" : "false");
   if (v)
-    this->updateLocalTopic(eLocalTopicEnabled);
+    this->updateLocalNode(eLocalNodeEnabled);
 }
 
 void HomieButtonNode::setTargetTopic(String const &v)
@@ -69,7 +69,7 @@ void HomieButtonNode::setOn(bool v)
   Homie.publishProperty(_target, "on", v ? "true" : "false", true);
   _on = v;
   if (_local)
-    updateLocalTopic(eOnChanged);
+    updateLocalNode(eOnChanged);
 }
 
 void HomieButtonNode::setBrightness(uint v)
@@ -80,5 +80,5 @@ void HomieButtonNode::setBrightness(uint v)
   Homie.publishProperty(_target, "brightness", szValue, true);
   _brightness = v;
   if (_local)
-    updateLocalTopic(eBrightnessChanged);
+    updateLocalNode(eBrightnessChanged);
 }

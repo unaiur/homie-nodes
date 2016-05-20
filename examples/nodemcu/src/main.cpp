@@ -47,12 +47,12 @@ public:
   {
     _debouncer.update();
     if (_debouncer.fell()) {
-      bool state = this->isLocalTopicEnabled() ? myLight.isOn() : this->isOn();
+      bool state = this->isLocalNodeEnabled() ? myLight.isOn() : this->isOn();
       this->setOn(!state);
     }
   }
 
-  void updateLocalTopic(EUpdatedProperty updatedProperty)
+  void updateLocalNode(EUpdatedProperty updatedProperty)
   {
     if (updatedProperty == eOnChanged)
     {
@@ -62,7 +62,7 @@ public:
     {
       myLight.setBrightness(getBrightness());
     }
-    else if (updatedProperty == eLocalTopicEnabled)
+    else if (updatedProperty == eLocalNodeEnabled)
     {
       this->setOn(myLight.isOn());
       this->setBrightness(myLight.getBrightness());

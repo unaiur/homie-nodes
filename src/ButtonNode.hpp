@@ -20,8 +20,8 @@ public:
   const char *getTypeName() const;
 
   // Returns true if the predefined local node associated with this button is enabled
-  bool isLocalTopicEnabled() const { return _local; }
-  void setLocalTopicEnabled(bool v);
+  bool isLocalNodeEnabled() const { return _local; }
+  void setLocalNodeEnabled(bool v);
 
   // Returns true if the button is pressed or switch on
   bool isOn() const { return _on; }
@@ -36,14 +36,14 @@ public:
 protected:
   enum EUpdatedProperty
   {
-    eLocalTopicEnabled,
+    eLocalNodeEnabled,
     eOnChanged,
     eBrightnessChanged
   };
   
   void setOn(bool v);
   void setBrightness(uint brightness);
-  virtual void updateLocalTopic(EUpdatedProperty updatedProperty) {}
+  virtual void updateLocalNode(EUpdatedProperty updatedProperty) {}
   virtual void onReadyToOperate();
 
 private:
