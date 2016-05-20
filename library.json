@@ -1,0 +1,25 @@
+{
+  "name": "Homie-nodes",
+  "keywords": "homie, nodes",
+  "description": "Abstract classes to represent differnt types of Homie nodes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unaiur/homie-nodes.git"
+  },
+  "version": "1.0",
+  "include": "src",
+  "frameworks": "arduino",
+  "platforms": "espressif",
+  "dependencies": [
+    {
+      "name": "Homie",
+      "authors": "Marvin Roger",
+      "frameworks": "arduino"
+    },
+    {
+      "name": "ArduinoColors",
+      "authors": "Unai Uribarri",
+      "frameworks": "arduino"
+    }
+  }
+}
