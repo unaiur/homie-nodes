@@ -47,7 +47,8 @@ void HomieLightNode::onReadyToOperate()
     if (traitList) traitList += ',';
     traitList += F("rgb");
   }
-  Homie.setNodeProperty(*this, "traits", traitList, true);
+  if (traitList.length() > 0)
+    Homie.setNodeProperty(*this, "traits", traitList, true);
 }
 
 void HomieLightNode::setOn(bool v)
