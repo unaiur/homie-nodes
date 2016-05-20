@@ -2,7 +2,6 @@
 #define HOMIE_BUTTON_NODE__INCLUDED__
 #include <Arduino.h>
 #include <Homie.h>
-#include "RgbColor.hpp"
 
 class HomieButtonNode: public HomieNode
 {
