@@ -17,8 +17,8 @@
       "frameworks": "arduino"
     },
     {
-      "name": "ArduinoColors",
-      "authors": "Unai Uribarri",
+      "name": "NeoPixelBus",
+      "authors": "Michael Miller",
       "frameworks": "arduino"
     }
   }

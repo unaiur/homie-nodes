@@ -3,6 +3,13 @@
 #include <Arduino.h>
 #include <Homie.h>
 
+/* Base class to implement a button node
+ *
+ * There are three types of buttons:
+ *   - Push buttons, which turns off automatically as soon the user removes the finger
+ *   - Switches, which retains the state
+ *   - Potentiometers, which can adjust an intensity or brigthness value from 0% (fully off) to 100% (fully on)
+ */
 class HomieButtonNode: public HomieNode
 {
 public:
@@ -12,7 +19,7 @@ public:
     eDimmer,
   };
 
-  HomieButtonNode(const char *id, Type t = ePushButton);
+  HomieButtonNode(const char *id, HomieNode *attachedNode = 0, Type t = ePushButton);
 
   bool is(Type t) const { return _type == t; }
   Type getType() const { return _type; }
@@ -29,8 +36,8 @@ public:
   int getBrightness() const { return _brightness; }
 
   // Gets the remote node this dimmer controls
-  String getTargetTopic() const {}
-  void setTargetTopic(String const &v);
+  HomieNode *getAttachedNode() const { return _attachedNode; }
+  String const &getAttachedNodePath() const;
 
 protected:
   enum EUpdatedProperty
@@ -39,10 +46,13 @@ protected:
     eOnChanged,
     eBrightnessChanged
   };
-  
+
   void setOn(bool v);
   void setBrightness(uint brightness);
+  void setAttachedNodePath(String const &path);
+  String getNodeTopic(const char *nodeId);
   virtual void updateLocalNode(EUpdatedProperty updatedProperty) {}
+  virtual void setup();
   virtual void onReadyToOperate();
 
 private:
@@ -50,6 +60,7 @@ private:
   bool _local;
   bool _on;
   int _brightness;
-  String _target;
+  HomieNode *_attachedNode;
+  String _attachedNodePath;
 };
 #endif

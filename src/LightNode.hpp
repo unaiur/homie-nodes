@@ -2,7 +2,7 @@
 #define HOMIE_LIGHT_NODE__INCLUDED__
 #include <Arduino.h>
 #include <Homie.h>
-#include "RgbColor.hpp"
+#include <internal/HtmlColor.h>
 
 class HomieLightNode: public HomieNode
 {
@@ -11,6 +11,7 @@ public:
     eSwitchable = 1, // mandatory trait
     eDimmable = 2,
     eColorable = 4,
+    eLastLightTrait = 8
   };
 
   HomieLightNode(const char *id, uint traits = 0);
@@ -23,17 +24,19 @@ public:
   int getBrightness() const { return _brightness; }
   void setBrightness(int v);
 
-  RgbColor getColor() const { return _color; }
-  void setColor(RgbColor v);
+  HtmlColor getColor() const { return _color; }
+  void setColor(HtmlColor v);
 
 protected:
   virtual void onReadyToOperate();
-  virtual void update(Trait source) = 0;
+  virtual void update(int source) = 0;
+  void _publishOn();
+  void _publishBrightness();
+  void _publishColor();
 
-private:
   const uint _traits;
   bool _on;
   int _brightness;
-  RgbColor _color;
+  HtmlColor _color;
 };
 #endif
