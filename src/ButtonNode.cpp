@@ -1,6 +1,6 @@
 #include "ButtonNode.hpp"
 
-HomieButtonNode::HomieButtonNode(const char *id, HomieNode *attachedNode, Type t)
+HomieButtonNode::HomieButtonNode(const char *id, HomieLightNode *attachedNode, Type t)
 : HomieNode(id, "button"), _type(t), _local(true), _on(false), _brightness(0)
 , _attachedNode(attachedNode), _attachedNodePath()
 {
@@ -32,7 +32,10 @@ void HomieButtonNode::setLocalNodeEnabled(bool v)
   _local = v;
   Homie.setNodeProperty(*this, "local", _local ? "true" : "false");
   if (v)
-    this->updateLocalNode(eLocalNodeEnabled);
+  {
+    _attachedNode->setOn(_on);
+    _attachedNode->setBrightness(_brightness);
+  }
 }
 
 String HomieButtonNode::getNodeTopic(const char *nodeId)
@@ -88,17 +91,17 @@ void HomieButtonNode::setOn(bool v)
   Serial.printf("Received order to turn %s local function\n", v ? "on" : "off");
   _on = v;
   if (_local)
-    updateLocalNode(eOnChanged);
+    _attachedNode->setOn(v);
   if (_attachedNodePath)
     Homie.publishRaw((_attachedNodePath + F("on/set")).c_str(), v ? "true" : "false", true);
 }
 
 void HomieButtonNode::setBrightness(uint v)
 {
-  if (!is(eDimmer)) return;
+  if (!is(eDimmer) || v == _brightness) return;
   _brightness = v;
   if (_local)
-    updateLocalNode(eBrightnessChanged);
+    _attachedNode->setBrightness(v);
   if (_attachedNodePath) {
     char szValue[8];
     sprintf(szValue, "%d", v);
