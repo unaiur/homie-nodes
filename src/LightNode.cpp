@@ -28,7 +28,7 @@ HomieLightNode::HomieLightNode(const char *id, uint traits)
       HtmlColor c;
       Serial.print(F("Received order to set color to "));
       Serial.println(value.c_str());
-      if (!c.Parse(value))
+      if (!c.Parse(value.c_str()))
         return false;
       setColor(c);
       return true;
@@ -48,7 +48,9 @@ void HomieLightNode::_publishBrightness()
 
 void HomieLightNode::_publishColor()
 {
-  Homie.setNodeProperty(*this, "color", _color);
+  char name[MAX_HTML_COLOR_NAME_LEN];
+  _color.ToString(name, sizeof name);
+  Homie.setNodeProperty(*this, "color", name);
 }
 
 void HomieLightNode::onReadyToOperate()
